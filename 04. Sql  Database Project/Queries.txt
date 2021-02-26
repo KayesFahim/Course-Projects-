@@ -1,0 +1,83 @@
+1. find out total count of every kind of kill in the Character_stat table.
+
+select sum(kills) as total_kill, sum(Headshot) as total_Headshot, sum(AR_Kill) as total_AR_Kill, sum(SMG_Kill) as total_SMG_Kill,
+	   sum(LMG_Kill) as total_LMG_Kill, sum(Pistol_Kill) as total_Pistol_Kill, sum(Win) as total_Win, sum(Damage) as total_Damage,
+       sum(Game_played) as total_Game_played, sum(Shot_Gun) as total_Shot_Gun, sum(Sniper_Kill) as Sniper_Kill
+from character_stat;
+
+2. find out total kill and total win of every player.
+
+select u.user_id, u.User_Fname, u.User_Lname, sum(c.kills) as total_kill, sum(c.win) as total_win
+from user_table u
+left outer join character_stat c
+on u.user_id = c.user_id
+group by User_Id;
+
+3. find out total kill and total win of every character (Legend).
+
+select Character_Name, Character_Id, sum(kills) as total_kill, sum(win) as total_win
+from character_stat 
+group by Character_Name;
+
+4. find out total kill, total win and total damage of the players who played.
+
+select u.User_Fname, u.User_Lname, u.user_id, sum(c.kills) as total_kill, sum(c.win) as total_win, sum(c.Damage) as total_Damage
+from user_table u
+left outer join character_stat c
+on u.user_id = c.user_id
+group by User_Id;
+
+5. find out who has the most kills.
+
+select user_id,  Max_kill
+from (select user_id, sum(kills) as Max_kill
+	  from character_stat
+      group by User_Id) derived_table_name
+group by User_Id
+order by Max_kill desc
+limit 1;
+
+6. find out who has the most wins.
+
+select user_id,  Max_win
+from (select user_id, sum(win) as Max_win
+	  from character_stat
+      group by User_Id) derived_table_name
+group by User_Id
+order by Max_win desc
+limit 1;
+
+7. find out who has the most damages.
+
+select user_id,  Max_Damage
+from (select user_id, sum(Damage) as Max_Damage
+	  from character_stat
+      group by User_Id) derived_table_name
+group by User_Id
+order by Max_Damage desc
+limit 1;
+
+8. find out the activities of every player in "Multiplayer" game mode - like their messages, results etc.
+
+select u.User_Fname, u.User_Lname, u.User_Id, mp.Match_Id, mp.Team_Id, ms.message, s.Kills, s.Damage, s.result_position
+from user_table u
+left outer join multiplayer mp
+on (u.User_Id = mp.User_Id)
+left outer join messages ms
+on (mp.Match_Id = ms.Match_Id and ms.User_Id = u.User_Id)
+left outer join summary s
+on (s.Match_Id = mp.Match_Id and s.User_Id = u.User_Id);
+
+9. find out the activities of the players who played "Multiplayer" game mode - like their messages, results etc.
+
+select u.User_Fname, u.User_Lname, u.User_Id, mp.Match_Id, mp.Team_Id, ms.message, s.Kills, s.Damage, s.result_position
+from user_table u
+join multiplayer mp
+on (u.User_Id = mp.User_Id)
+join messages ms
+on (mp.Match_Id = ms.Match_Id and ms.User_Id = u.User_Id)
+join summary s
+on (s.Match_Id = mp.Match_Id and s.User_Id = u.User_Id); 
+
+
+
