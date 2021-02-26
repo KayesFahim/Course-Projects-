@@ -1,5 +1,0 @@
-Run Welcome file Fist, 
-
-login Details : 
-username : admin
-pass : admin
